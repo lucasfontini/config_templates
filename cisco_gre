@@ -1,0 +1,20 @@
+{# Template para configuração de um túnel GRE em um roteador Cisco #}
+
+enable
+configure terminal
+
+! Configuração da interface do túnel
+interface {{ tunnel_interface }}
+  ip address {{ tunnel_ip }} {{ tunnel_netmask }}
+  tunnel source {{ tunnel_source }}
+  tunnel destination {{ tunnel_destination }}
+
+{% if routes is defined %}
+  {% for route in routes %}
+! Rota para a rede remota através do túnel
+ip route {{ route.destination }} {{ route.netmask }} {{ route.next_hop }}
+  {% endfor %}
+{% endif %}
+
+exit
+write memory  ! Salvar configuração
